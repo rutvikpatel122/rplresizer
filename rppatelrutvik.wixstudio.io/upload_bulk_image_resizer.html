@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload and Crop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <style>
+
+#dimensions {
+    height: 80vh;
+    position: fixed;
+    border-radius: 31px;
+    background: #f9f9f9;
+    z-index: 1;
+    top: 47%;
+    transform: translate(-50%, -50%);
+    padding: 30px;
+    width: 23%;
+    right: -13%;
+    
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.checkbox-group input {
+    margin-right: 5px;
+}
+
+.button {
+    width: 150px;
+    padding: 10px;
+    font-size: 0.9rem;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.button:hover {
+    background-color: #45a049; /* Darker Green */
+}
+#title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    color: #51e3e4;
+        }
+#crop-options {
+    display: flex;
+    flex-direction: column;
+    background:#ffffff;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    color: #595959;
+    font-size: small;
+    width: 100%;
+    padding: 10px;
+    border-radius: 13px;
+    align-items: center;
+}
+
+.download-container {
+    display: flex;
+    color: white;
+    width: 100%;
+    border-radius: 13px;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+}
+body {
+            font-family: Arial, sans-serif;
+            background-color: #fff3c4;
+            text-align: center;
+            padding: 20px;
+        }
+        #drop-area {
+    border: 2px dashed #54e4e4;
+    padding: 20px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 600px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+        #drop-area.highlight {
+            background-color: #e0e7ff;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #image-preview {
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        #crop-options {
+            display: flex;
+            margin-top: 20px;
+            display: none;
+        }
+        #message {
+            margin-top: 20px;
+            color: red;
+        }
+        #dimensions {
+            display: none;
+            margin-top: 20px;
+        }
+
+
+/* CSS */
+.button-53 {
+  margin: 10px;
+  padding: 15px 30px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  border-radius: 10px;
+  display: block;
+  border: 0px;
+  font-weight: 700;
+  box-shadow: 0px 0px 14px -7px #fff3c4;
+  background-image: linear-gradient(141deg, #f2f6d0 0%, #3ae1e7 56%, #fff3c4 127%, #c8fdff 100%);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-53:hover {
+  background-position: right center;
+  /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
+}
+
+.button-53:active {
+  transform: scale(0.95);
+}
+    
+#footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        #footer a {
+            color: #e39f35;
+            text-decoration: none;
+        }
+
+        #footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="drop-area">
+        <div id="title">Rplresizer</div>
+        <div>
+        <h3 style="color: #999999; padding: 14px;">Drag File here!</h3>
+        <input type="file" id="fileElem" accept=".zip" style="display:none;">
+        <label for="fileElem" class="button-53" role="button">Upload ZIP File</label>
+    </div>
+
+    <div id="footer">
+        Developed by <a href="https://rutvikpatel.xyz" target="_blank">Rutvik Patel</a>
+    </div>
+</div>
+    <div id="message"></div>
+
+    <div id="dimensions">
+        <h3>Set Crop Dimensions</h3>
+        <div class="input-group">
+            <label for="crop-width">Width:</label>
+            <input type="number" id="crop-width" placeholder="250" value="250">
+        </div>
+        <div class="input-group">
+            <label for="crop-height">Height:</label>
+            <input type="number" id="crop-height" placeholder="250" value="250">
+        </div>
+        <button id="set-dimensions" class="button-53">Set Dimensions</button>
+        <div id="crop-options">
+            <h3>Select Crop Area</h3>
+            <button id="crop-button" class="button-53">Crop &amp; Next</button>
+        </div>
+        <div class="download-container">
+            <button id="download-button" class="button-53" style="display: none;">Download All Cropped</button>
+        </div>
+    </div>
+
+    <div id="image-preview" style="margin-top: 0; display: flex; width: 70%; height: 80vh; flex-direction: row; flex-wrap: nowrap; align-content: space-around; justify-content: center; align-items: center;"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        const dropArea = document.getElementById('drop-area');
+        const imagePreview = document.getElementById('image-preview');
+        const cropOptions = document.getElementById('crop-options');
+        const downloadButton = document.getElementById('download-button');
+        const message = document.getElementById('message');
+        const dimensionsSection = document.getElementById('dimensions');
+        const cropWidthInput = document.getElementById('crop-width');
+        const cropHeightInput = document.getElementById('crop-height');
+        const setDimensionsButton = document.getElementById('set-dimensions');
+
+        let images = [];
+        let croppedDataList = [];
+        let currentImageIndex = 0;
+        let cropper;
+
+        // Event listeners for drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+        });
+
+        dropArea.addEventListener('drop', handleDrop, false);
+        document.getElementById('fileElem').addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            const fileArray = Array.from(files);
+            fileArray.forEach(file => {
+                if (file.type === 'application/zip') {
+                    uploadZipFile(file);
+                } else {
+                    showMessage("Please upload a ZIP file.");
+                }
+            });
+        }
+
+        function uploadZipFile(zipFile) {
+            const formData = new FormData();
+            formData.append('zip_file', zipFile);
+
+            fetch('/upload_zip', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showMessage("Error: " + data.error);
+                } else {
+                    images = data.images;
+                    dropArea.style.display = 'none'; // Hide upload area
+                    dimensionsSection.style.display = 'flex'; // Show dimensions input
+                    showNextImage(); // Show the first image for cropping
+                }
+            })
+            .catch(err => {
+                showMessage("Error uploading ZIP file: " + err.message);
+            });
+        }
+
+        function showNextImage() {
+            if (currentImageIndex < images.length) {
+                const imgElement = document.createElement('img');
+                imgElement.src = images[currentImageIndex];
+                imgElement.id = 'image-to-crop';
+                imagePreview.innerHTML = '';
+                imagePreview.appendChild(imgElement);
+                const width = parseInt(cropWidthInput.value);
+                const height = parseInt(cropHeightInput.value);
+              
+                cropper = new Cropper(imgElement, {
+                    aspectRatio: width / height, // Set fixed aspect ratio for 200x250
+                    viewMode: 1,
+                    dragMode: 'move',
+                    ready: () => {
+                        cropper.setCropBoxData({
+                            width: width,
+                            height: height
+                        });
+                    }
+                });
+
+                cropOptions.style.display = 'flex'; // Show crop options
+                downloadButton.style.display = 'none'; // Hide download button
+            } else {
+                cropOptions.style.display='none';
+                downloadButton.style.display = 'block'; // Show download button
+            }
+        }
+
+        setDimensionsButton.addEventListener('click', () => {
+            const width = parseInt(cropWidthInput.value);
+            const height = parseInt(cropHeightInput.value);
+            if (width > 0 && height > 0) {
+                cropper.setAspectRatio(width / height);
+                cropper.setCropBoxData({
+                    width: width,
+                    height: height
+                });
+            } else {
+                showMessage("Please enter valid dimensions.");
+            }
+        });
+
+        document.getElementById('crop-button').addEventListener('click', () => {
+            if (cropper) {
+                const width = parseInt(cropWidthInput.value);
+                const height = parseInt(cropHeightInput.value);
+                const croppedCanvas = cropper.getCroppedCanvas({
+                    width: width,
+                    height: height,
+                });
+                const croppedDataUrl = croppedCanvas.toDataURL('image/png');
+                croppedDataList.push(croppedDataUrl);
+                currentImageIndex++;
+                showNextImage(); // Show next image for cropping
+            }
+        });
+
+        downloadButton.addEventListener('click', () => {
+            if (croppedDataList.length > 0) {
+                const zip = new JSZip();
+                const folder = zip.folder('cropped_images');
+
+                croppedDataList.forEach((dataUrl, index) => {
+                    const byteString = atob(dataUrl.split(',')[1]);
+                    const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+                    const ab = new Uint8Array(byteString.length);
+                    for (let i = 0; i < byteString.length; i++) {
+                        ab[i] = byteString.charCodeAt(i);
+                    }
+                    folder.file(`cropped_image_${index + 1}.png`, ab, {binary: true});
+                });
+
+                zip.generateAsync({type: 'blob'}).then(content => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(content);
+                    link.download = 'cropped_images.zip';
+                    link.click();
+                });
+            }
+        });
+
+        function showMessage(msg) {
+            message.textContent = msg;
+            setTimeout(() => {
+                message.textContent = '';
+            }, 5000);
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</body>
+</html>
