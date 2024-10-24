@@ -315,7 +315,7 @@ body {
             const formData = new FormData();
             formData.append('zip_file', zipFile);
 
-            fetch('/upload_zip', {
+            fetch('https://rppatelrutvik122.pythonanywhere.com/upload_zip', {
                 method: 'POST',
                 body: formData
             })
