@@ -341,7 +341,7 @@ function uploadZipFile(zipFile) {
     formData.append('zip_file', zipFile);
 
     // Making a POST request to /test
-    fetch('/test', {
+    fetch('https://rppatelrutvik122.pythonanywhere.com/test', {
         method: 'POST',
         body: formData
     })
