@@ -108,7 +108,7 @@ h3 {
 }
 body {
             font-family: Arial, sans-serif;
-            background-color: #fff3c4;
+            background-color: black;
             text-align: center;
             padding: 20px;
         }
@@ -250,6 +250,7 @@ body {
             <button id="download-button" class="button-53" style="display: none;">Download All Cropped</button>
         </div>
     </div>
+    <div id="loading" style="display:none;"><img src="loading.gif"/></div>
 
     <div id="image-preview" style="margin-top: 0; display: flex; width: 70%; height: 80vh; flex-direction: row; flex-wrap: nowrap; align-content: space-around; justify-content: center; align-items: center;"></div>
 
@@ -314,15 +315,19 @@ body {
         function uploadZipFile(zipFile) {
             const formData = new FormData();
             formData.append('zip_file', zipFile);
+            const loadingIndicator = document.getElementById('loading');
+    loadingIndicator.style.display = 'block';
 
-            fetch('https://rppatelrutvik122.pythonanywhere.com/upload_zip', {
-                method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' },
-                mode: "cors"
-            })
-            .then(response => response.json())
-            .then(data => {
+    fetch('https://rppatelrutvik122.pythonanywhere.com/upload_zip', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' },
+        mode: "cors"
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Hide loading indicator
+        loadingIndicator.style.display = 'none';
                 if (data.error) {
                     showMessage("Error: " + data.error);
                 } else {
@@ -333,6 +338,8 @@ body {
                 }
             })
             .catch(err => {
+        loadingIndicator.style.display = 'none';
+
                 showMessage("Error uploading ZIP file: " + err.message);
             });
         }
@@ -418,6 +425,23 @@ body {
                     link.click();
                 });
             }
+            Promise.all(imgPromises)
+                .then(() => {
+                    return zip.generateAsync({ type: 'blob' });
+                })
+                .then(content => {
+                    // Create a link to download the zip file
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(content);
+                    link.download = 'cropped-images.zip';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                })
+                .catch(err => {
+                    showMessage("Error generating zip file: " + err.message);
+                });
+    
         });
 
         function showMessage(msg) {
@@ -427,6 +451,7 @@ body {
             }, 5000);
         }
     </script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </body>
 </html>
