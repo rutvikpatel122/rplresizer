@@ -311,30 +311,52 @@ body {
             });
         }
 
-        function uploadZipFile(zipFile) {
-            const formData = new FormData();
-            formData.append('zip_file', zipFile);
+        // function uploadZipFile(zipFile) {
+        //     const formData = new FormData();
+        //     formData.append('zip_file', zipFile);
 
-            fetch('https://rppatelrutvik122.pythonanywhere.com/upload_zip', {
-                method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' } 
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showMessage("Error: " + data.error);
-                } else {
-                    images = data.images;
-                    dropArea.style.display = 'none'; // Hide upload area
-                    dimensionsSection.style.display = 'flex'; // Show dimensions input
-                    showNextImage(); // Show the first image for cropping
-                }
-            })
-            .catch(err => {
-                showMessage("Error uploading ZIP file: " + err.message);
-            });
+        //     fetch('https://rppatelrutvik122.pythonanywhere.com/upload_zip', {
+        //         method: 'POST',
+        //         body: formData,
+        //         headers: { 'Accept': 'application/json' } 
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.error) {
+        //             showMessage("Error: " + data.error);
+        //         } else {
+        //             images = data.images;
+        //             dropArea.style.display = 'none'; // Hide upload area
+        //             dimensionsSection.style.display = 'flex'; // Show dimensions input
+        //             showNextImage(); // Show the first image for cropping
+        //         }
+        //     })
+        //     .catch(err => {
+        //         showMessage("Error uploading ZIP file: " + err.message);
+        //     });
+        // }
+
+function uploadZipFile(zipFile) {
+    const formData = new FormData();
+    formData.append('zip_file', zipFile);
+
+    // Making a POST request to /test
+    fetch('/test', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.log("Error:", data.error);
+        } else {
+            console.log("Success:", data);  // Handle the successful response
         }
+    })
+    .catch(err => {
+        console.error("Error uploading ZIP file:", err.message);
+    });
+}
 
         function showNextImage() {
             if (currentImageIndex < images.length) {
