@@ -317,7 +317,8 @@ body {
 
             fetch('https://rppatelrutvik122.pythonanywhere.com/upload_zip', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: { 'Accept': 'application/json' } 
             })
             .then(response => response.json())
             .then(data => {
